@@ -1,5 +1,5 @@
-Segno PIL -- Segno writer plugin for creating PIL/Pillow images
----------------------------------------------------------------
+Segno PIL -- Segno writer plugin for creating PIL/Pillow images from QR Codes
+-----------------------------------------------------------------------------
 
 This Segno plugin converts a (Micro) QR Code to a PIL/Pillow Image.
 
