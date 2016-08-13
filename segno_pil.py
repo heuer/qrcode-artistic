@@ -48,28 +48,24 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff'):
             color can be provided as ``(R, G, B)`` tuple, as hexadecimal
             format (``#RGB`` or ``#RRGGBB``), or web color name (i.e. ``red``).
     :param background: Optional background color (default: white).
-            See `color` for valid values. In addition, ``None`` is
-            accepted which indicates a transparent background.
+            See `color` for valid values.
     """
-    def pil_color(color):
-        if color is not None and not isinstance(color, tuple):
-            return colors.color_to_rgb(color)
-        return color
+    def pil_color(clr):
+        if not isinstance(clr, tuple):
+            return colors.color_to_rgb(clr)
+        return clr
 
     scale = int(scale)
     check_valid_scale(scale)
-    border = get_border(qrcode.version, border)
+    border = get_border(qrcode._version, border)
     width, height = qrcode.symbol_size(scale, border)
     stroke_col, bg_col = pil_color(color), pil_color(background)
-    transparent = background is None
     palette = []
-    if transparent:
-        bg_col = colors.invert_color(stroke_col)
     is_greyscale = colors.color_is_black(stroke_col) and colors.color_is_white(bg_col)
     is_mirrored = colors.color_is_white(stroke_col) and colors.color_is_black(bg_col)
     is_greyscale = is_greyscale or is_mirrored
     stroke_col_idx, bg_col_idx = 1, 0
-    if transparent or not is_greyscale:
+    if not is_greyscale:
         mode = 'P'  # Indexed-color aka Palette mode
         palette.extend(bg_col)
         palette.extend(stroke_col)
