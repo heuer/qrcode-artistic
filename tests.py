@@ -26,13 +26,6 @@ def test_pil():
     eq_('1', img.mode)
 
 
-def test_pil_transparent():
-    qr = segno.make_qr('A')
-    img = qr.to_pil(background=None)
-    ok_(img)
-    eq_('P', img.mode)
-
-
 def test_pil_color():
     qr = segno.make_qr('A')
     img = qr.to_pil(color='green')
@@ -52,13 +45,6 @@ def test_pil_greyscale_mirrored():
     img = qr.to_pil(color='#fff', background='#000')
     ok_(img)
     eq_('1', img.mode, 'Expected greyscale image')
-
-
-def test_pil_color_black_tranparent():
-    qr = segno.make_qr('A')
-    img = qr.to_pil(color='#000', background=None)
-    ok_(img)
-    eq_('P', img.mode)
 
 
 def test_pil_pal_background():
