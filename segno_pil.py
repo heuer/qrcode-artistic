@@ -60,19 +60,22 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff'):
     check_valid_scale(scale)
     border = get_border(qrcode.version, border)
     width, height = qrcode.symbol_size(scale, border)
-    fg_col, bg_col = pil_color(color), pil_color(background)
+    stroke_col, bg_col = pil_color(color), pil_color(background)
     transparent = background is None
     palette = []
     if transparent:
-        bg_col = colors.invert_color(fg_col)
-    if transparent or fg_col != (0, 0, 0) or bg_col != (255, 255, 255):
+        bg_col = colors.invert_color(stroke_col)
+    is_greyscale = colors.color_is_black(stroke_col) and colors.color_is_white(bg_col)
+    is_mirrored = colors.color_is_white(stroke_col) and colors.color_is_black(bg_col)
+    is_greyscale = is_greyscale or is_mirrored
+    if transparent or not is_greyscale:
         mode = 'P'  # Indexed-color aka Palette mode
         palette.extend(bg_col)
-        palette.extend(fg_col)
-        fg_col, bg_col = 1, 0
+        palette.extend(stroke_col)
+        stroke_col, bg_col = 1, 0
     else:
         mode = '1'  # Greyscale mode
-        fg_col, bg_col = 0, 1
+        stroke_col, bg_col = (0, 1) if not is_mirrored else (1, 0)
     img = Image.new(mode, (width, height), bg_col)
     if palette:
         img.putpalette(palette)
@@ -84,5 +87,5 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff'):
                 continue
             x = (col_no + border) * scale
             y = (row_no + border) * scale
-            rect([(x, y), (x + scale - 1, y + scale - 1)], fill=fg_col)
+            rect([(x, y), (x + scale - 1, y + scale - 1)], fill=stroke_col)
     return img
