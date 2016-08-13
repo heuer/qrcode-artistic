@@ -61,6 +61,13 @@ def test_pil_color_black_tranparent():
     eq_('P', img.mode)
 
 
+def test_pil_pal_background():
+    qr = segno.make('Hello')
+    img = qr.to_pil(color='white', background='green')
+    ok_(img)
+    eq_('P', img.mode)
+
+
 def test_pil_scale():
     qr = segno.make_qr('A')
     scale = 4
