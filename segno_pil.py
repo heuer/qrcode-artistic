@@ -68,14 +68,15 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff'):
     is_greyscale = colors.color_is_black(stroke_col) and colors.color_is_white(bg_col)
     is_mirrored = colors.color_is_white(stroke_col) and colors.color_is_black(bg_col)
     is_greyscale = is_greyscale or is_mirrored
+    stroke_col, bg_col = 1, 0
     if transparent or not is_greyscale:
         mode = 'P'  # Indexed-color aka Palette mode
         palette.extend(bg_col)
         palette.extend(stroke_col)
-        stroke_col, bg_col = 1, 0
     else:
         mode = '1'  # Greyscale mode
-        stroke_col, bg_col = (0, 1) if not is_mirrored else (1, 0)
+        if not is_mirrored:
+            stroke_col, bg_col = 0, 1
     img = Image.new(mode, (width, height), bg_col)
     if palette:
         img.putpalette(palette)
