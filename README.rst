@@ -6,9 +6,11 @@ This `Segno`_ plugin converts a (Micro) QR Code to a PIL/Pillow Image.
 This plugin is not required to write PNG files. If you want to create a PNG
 file, it's recommended to use Segno's native ``png`` method.
 
-The resulting image is either a greyscale (PIL mode "1") or an indexed-color
-image (PIL mode "P"). The latter is generated if the module color is not black
-or the background color is not white (i.e. transparent or any other color).
+The resulting image is either a greyscale (PIL mode "1"), an indexed-color
+image (PIL mode "P") or an RGBA image. The mode depends on the provided
+(background) color values. The plugin chooses the optimal (minimal) mode
+automatically. Use the ``mode`` parameter to enforce a specific mode. Mode "RGB"
+isn't supported, though.
 
 
 Usage:
@@ -28,10 +30,13 @@ Usage:
     >>> pil_img.save('example-3.png')
     >>> # Different scale and change module color and transparent background
     >>> pil_img = qr.to_pil(scale=10, color='#36c', background=None)
+    >>> # transparency = 0 means that the first color in the palette should be
+    >>> # transparent. The background color is ALWAYS the first entry in the palette
     >>> pil_img.save('example-4.png', transparency=0)
     >>> # Different scale and change module color and yellow background
-    >>> pil_img = qr.to_pil(scale=10, color='#36c', background='yellow')
-    >>> pil_img.convert('RGB').save('example-4.jpg')  # Save as JPEG (does not support "P" images)
+    >>> # Enforce 'RGBA' mode since 'P' isn't supported by JPEG even if no color
+    >>> # uses the alpha channel
+    >>> qr.to_pil(scale=10, color='#36c', background='yellow', mode='RGBA').save('example-4.jpg')
     >>> rotated_img = pil_img.rotate(45, expand=True)
     >>> rotated_img.convert('RGB').save('example-5.jpg')
 
