@@ -3,8 +3,10 @@ Segno PIL -- Segno plugin for creating PIL/Pillow images from QR Codes
 
 This `Segno`_ plugin converts a (Micro) QR Code to a PIL/Pillow Image.
 
-This plugin is not required to write PNG files. If you want to create a PNG
-file, it's recommended to use Segno's native ``png`` method.
+This plugin is not required to write PNG, EPS or PDF files. Segno's native
+implementations usually generate smaller files in less time. This plugin
+might be useful to modify the QR Codes (i.e. rotate or blur) or to save the
+QR Codes in an image format which is not supported by Segno.
 
 The resulting image is either a greyscale (PIL mode "1"), an indexed-color
 image (PIL mode "P") or an RGBA image. The mode depends on the provided
