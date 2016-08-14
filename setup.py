@@ -41,7 +41,7 @@ setup(
     long_description=read('README.rst', 'CHANGES.rst'),
     license='BSD',
     author='Lars Heuer',
-    author_email='heuer[at]semagia.com',
+    author_email='heuer@semagia.com',
     platforms=['any'],
     py_modules=['segno_pil'],
     entry_points="""
