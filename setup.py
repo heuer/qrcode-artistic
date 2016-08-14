@@ -37,7 +37,7 @@ setup(
     name='segno-pil',
     version=version,
     url='https://github.com/heuer/segno-pil/',
-    description='PIL/Pillow writer plugin for the Segno (Micro) QR Code generator',
+    description='PIL/Pillow plugin for the Segno (Micro) QR Code generator',
     long_description=read('README.rst', 'CHANGES.rst'),
     license='BSD',
     author='Lars Heuer',
