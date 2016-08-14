@@ -1,7 +1,7 @@
 Segno PIL -- Segno plugin for creating PIL/Pillow images from QR Codes
 ----------------------------------------------------------------------
 
-This Segno plugin converts a (Micro) QR Code to a PIL/Pillow Image.
+This `Segno`_ plugin converts a (Micro) QR Code to a PIL/Pillow Image.
 
 This plugin is not required to write PNG files. If you want to create a PNG
 file, it's recommended to use Segno's native ``png`` method.
@@ -12,6 +12,8 @@ or the background color is not white (i.e. transparent or any other color).
 
 
 Usage:
+
+.. code-block:: python
 
     >>> import segno
     >>> qr = segno.make('Hello world')
@@ -32,3 +34,6 @@ Usage:
     >>> pil_img.convert('RGB').save('example-4.jpg')  # Save as JPEG (does not support "P" images)
     >>> rotated_img = pil_img.rotate(45, expand=True)
     >>> rotated_img.convert('RGB').save('example-5.jpg')
+
+
+.. _Segno: https://github.com/heuer/segno
