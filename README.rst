@@ -12,7 +12,7 @@ The resulting image is either a greyscale (PIL mode "1"), an indexed-color
 image (PIL mode "P") or an RGBA image. The mode depends on the provided
 (background) color values. The plugin chooses the optimal (minimal) mode
 automatically. Use the ``mode`` parameter to enforce a specific mode. Mode "RGB"
-isn't supported, though.
+is not supported, though.
 
 
 Usage:
