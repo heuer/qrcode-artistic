@@ -36,11 +36,12 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff',
     """\
     Converts the provided `qrcode` into a PIL/Pillow image.
 
-    This function creates either a greyscale (PIL/Pillow mode "1") or a
-    indexed-color (PIL/Pillow mode "P") image.
+    This function creates either a greyscale (PIL/Pillow mode "1"), an
+    indexed-color (PIL/Pillow mode "P") or RGBA image.
 
-    If `background` is ``None`` (transparent) use ``save(..., transparency=0)``
-    to save the PIL Image with a transparent background.
+    If `background` is ``None`` (transparent) and the image uses mode "P",
+    use ``save(..., transparency=0)`` to save the PIL Image with a transparent
+    background (background color is always the first entry in the palette).
 
     :param scale: Indicates the size of a single module (default: 1 which
             corresponds to 1 x 1 pixel per module).
