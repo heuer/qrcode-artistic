@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
         warnings.warn('PIL or Pillow is required')
         raise
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 
 _SUPPORTED_MODES = (None, 'P', 'RGBA')
@@ -50,7 +50,8 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff',
             will be used (``4`` for QR Codes, ``2`` for a Micro QR Codes).
     :param color: Color of the modules (default: black). The
             color can be provided as ``(R, G, B)`` tuple, as hexadecimal
-            format (``#RGB`` or ``#RRGGBB``), or web color name (i.e. ``red``).
+            format (``#RGB``, ``#RRGGBB`` ``RRGGBBAA``), or web color
+            name (i.e. ``red``).
     :param background: Optional background color (default: white).
             See `color` for valid values. If background is set to ``None`` the
             background will be transparent.
