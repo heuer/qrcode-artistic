@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
         warnings.warn('PIL or Pillow is required')
         raise
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 _SUPPORTED_MODES = (None, 'P', 'RGBA')
