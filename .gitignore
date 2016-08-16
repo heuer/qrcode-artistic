@@ -1,0 +1,9 @@
+*.pyc
+.coverage
+.tox
+.idea
+*.egg-info
+tests/htmlcov/*
+tests/output/*
+dist/
+build/
