@@ -13,8 +13,7 @@ Segno writer plugin to convert a (Micro) QR Code into a PIL/Pillow Image.
 :license:      BSD License
 """
 from __future__ import absolute_import
-from segno.writers import check_valid_scale
-from segno import colors
+from segno import colors, utils
 try:
     from PIL import Image, ImageDraw
 except ImportError:  # pragma: no cover
@@ -67,7 +66,7 @@ def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff',
         raise ValueError('Unsupported mode "{0}", use one of these: {1}' \
                          .format(mode, _SUPPORTED_MODES))
     scale = int(scale)
-    check_valid_scale(scale)
+    utils.check_valid_scale(scale)
     border = qrcode.default_border_size if border is None else border
     width, height = qrcode.symbol_size(scale, border)
     stroke_col, bg_col = pil_color(color), pil_color(background)
