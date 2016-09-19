@@ -179,4 +179,4 @@ def test_pil_mode_force_rgba():
 
 
 if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+    pytest.main([__file__])
