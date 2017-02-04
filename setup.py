@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2016 - 2017 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # License: BSD License
 #
 """\
 Setup script.
-
-:author:       Lars Heuer (heuer[at]semagia.com)
-:organization: Semagia - http://www.semagia.com/
-:license:      BSD License
 """
 from __future__ import unicode_literals
 from setuptools import setup
@@ -58,7 +54,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Topic :: Multimedia :: Graphics',
