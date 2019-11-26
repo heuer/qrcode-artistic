@@ -7,3 +7,4 @@ tests/htmlcov/*
 tests/output/*
 dist/
 build/
+venv/
