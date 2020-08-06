@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 - 2018 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2016 - 2020 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # License: BSD License
@@ -9,12 +9,12 @@
 Segno writer plugin to convert a (Micro) QR Code into a PIL/Pillow Image.
 """
 from __future__ import absolute_import
-from segno import colors, utils
+import io
 try:
-    from PIL import Image, ImageDraw
+    from PIL import Image
 except ImportError:  # pragma: no cover
     try:
-        import Image, ImageDraw
+        import Image
     except ImportError:  # pragma: no cover
         import warnings
         warnings.warn('PIL or Pillow is required')
@@ -23,80 +23,65 @@ except ImportError:  # pragma: no cover
 __version__ = '0.1.7.dev0'
 
 
-_SUPPORTED_MODES = (None, 'P', 'RGBA')
-
-
-def write_pil(qrcode, scale=1, border=None, color='#000', background='#fff',
-              mode=None):
+def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
+              finder_dark=False, finder_light=False,
+              data_dark=False, data_light=False,
+              version_dark=False, version_light=False,
+              format_dark=False, format_light=False,
+              alignment_dark=False, alignment_light=False,
+              timing_dark=False, timing_light=False,
+              separator=False, dark_module=False,
+              quiet_zone=False, mode=None):
     """\
     Converts the provided `qrcode` into a PIL/Pillow image.
 
-    This function creates either a greyscale (PIL/Pillow mode "1"), an
-    indexed-color (PIL/Pillow mode "P") or RGBA image.
+    If any color is ``None`` use the Image.info dict to detect which
+    pixel / palette entry represents a transparent value.
 
-    If `background` is ``None`` (transparent) and the image uses mode "P",
-    use ``save(..., transparency=0)`` to save the PIL Image with a transparent
-    background (background color is always the first entry in the palette).
+    See `Colorful QR Codes <https://segno.readthedocs.io/en/stable/colorful-qrcodes.html>`_
+    for a detailed description of all module colors.
 
     :param scale: Indicates the size of a single module (default: 1 which
             corresponds to 1 x 1 pixel per module).
     :param border: Integer indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
             will be used (``4`` for QR Codes, ``2`` for a Micro QR Codes).
-    :param color: Color of the modules (default: black). The
+    :param dark: Color of the dark modules (default: black). The
             color can be provided as ``(R, G, B)`` tuple, as hexadecimal
             format (``#RGB``, ``#RRGGBB`` ``RRGGBBAA``), or web color
             name (i.e. ``red``).
-    :param background: Optional background color (default: white).
-            See `color` for valid values. If background is set to ``None`` the
-            background will be transparent.
+    :param light: Color of the light modules (default: white).
+            See `color` for valid values. If light is set to ``None`` the
+            light modules will be transparent.
+    :param finder_dark: Color of the dark finder modules (default: same as ``dark``)
+    :param finder_light: Color of the light finder modules (default: same as ``light``)
+    :param data_dark: Color of the dark data modules (default: same as ``dark``)
+    :param data_light: Color of the light data modules (default: same as ``light``)
+    :param version_dark: Color of the dark version modules (default: same as ``dark``)
+    :param version_light: Color of the light version modules (default: same as ``light``)
+    :param format_dark: Color of the dark format modules (default: same as ``dark``)
+    :param format_light: Color of the light format modules (default: same as ``light``)
+    :param alignment_dark: Color of the dark alignment modules (default: same as ``dark``)
+    :param alignment_light: Color of the light alignment modules (default: same as ``light``)
+    :param timing_dark: Color of the dark timing pattern modules (default: same as ``dark``)
+    :param timing_light: Color of the light timing pattern modules (default: same as ``light``)
+    :param separator: Color of the separator (default: same as ``light``)
+    :param dark_module: Color of the dark module (default: same as ``dark``)
+    :param quiet_zone: Color of the quiet zone modules (default: same as ``light``)
     :param mode: A PIL Image mode. Either ``None`` (default) to autodetect the
-            mode or 'P' or 'RGBA'.
+            mode or any Pillow Image mode.
     """
-    def pil_color(clr):
-        if clr is not None and not isinstance(clr, tuple):
-            return colors.color_to_rgb_or_rgba(clr, alpha_float=False)
-        return clr
-
-    if mode not in _SUPPORTED_MODES:
-        raise ValueError('Unsupported mode "{0}", use one of these: {1}' \
-                         .format(mode, _SUPPORTED_MODES))
-    scale = int(scale)
-    utils.check_valid_scale(scale)
-    border = qrcode.default_border_size if border is None else border
-    width, height = qrcode.symbol_size(scale, border)
-    stroke_col, bg_col = pil_color(color), pil_color(background)
-    palette = []
-    is_greyscale = False
-    is_mirrored = False
-    if bg_col is None:
-        bg_col = colors.invert_color(stroke_col[:3])
-        if len(stroke_col) == 4 or mode == 'RGBA':
-            bg_col += (0,)
-    else:
-        is_greyscale = colors.color_is_black(stroke_col) and colors.color_is_white(bg_col)
-        is_mirrored = colors.color_is_white(stroke_col) and colors.color_is_black(bg_col)
-        is_greyscale = is_greyscale or is_mirrored
-    if mode == 'RGBA' or len(stroke_col) == 4 or len(bg_col) == 4:
-        mode = 'RGBA'
-    elif not is_greyscale or mode == 'P':
-        mode = 'P'  # Indexed-color aka Palette mode
-        palette.extend(bg_col)
-        palette.extend(stroke_col)
-        stroke_col, bg_col = 1, 0
-    else:
-        mode = '1'  # Greyscale mode
-        stroke_col, bg_col = (0, 1) if not is_mirrored else (1, 0)
-    img = Image.new(mode, (width, height), bg_col)
-    if palette:
-        img.putpalette(palette)
-    drw = ImageDraw.Draw(img)
-    rect = drw.rectangle
-    for row_no, row in enumerate(qrcode.matrix):
-        for col_no, bit in enumerate(row):
-            if not bit:
-                continue
-            x = (col_no + border) * scale
-            y = (row_no + border) * scale
-            rect([(x, y), (x + scale - 1, y + scale - 1)], fill=stroke_col)
+    buff = io.BytesIO()
+    qrcode.save(buff, kind='png', scale=scale, border=border, dark=dark, light=light,
+                finder_dark=finder_dark, finder_light=finder_light,
+                data_dark=data_dark, data_light=data_light,
+                version_dark=version_dark, version_light=version_light,
+                format_dark=format_dark, format_light=format_light,
+                alignment_dark=alignment_dark, alignment_light=alignment_light,
+                timing_dark=timing_dark, timing_light=timing_light,
+                separator=separator, dark_module=dark_module, quiet_zone=quiet_zone)
+    buff.seek(0)
+    img = Image.open(buff)
+    if mode is not None and mode != img.mode:
+        img = img.convert(mode)
     return img
