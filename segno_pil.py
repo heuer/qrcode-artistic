@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 - 2020 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2016 - 2020 -- Lars Heuer
 # All rights reserved.
 #
 # License: BSD License
@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
         warnings.warn('PIL or Pillow is required')
         raise
 
-__version__ = '0.1.7.dev0'
+__version__ = '1.0.0.dev0'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
