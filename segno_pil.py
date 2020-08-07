@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
         warnings.warn('PIL or Pillow is required')
         raise
 
-__version__ = '1.0.0'
+__version__ = '1.0.1.dev0'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
