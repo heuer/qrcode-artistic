@@ -1,6 +1,17 @@
 Changes
 =======
 
+1.0.0 -- 2020-08-07
+-------------------
+* Support for multiple module colors
+* Support for Segno's API >= 1.0.0
+* API breaking changes:
+
+  - Changed parameter "color" to "dark" and "background" to "light"
+    to match Segno's API
+  - Removed "mode" parameter
+
+
 0.1.6 -- 2016-09-19
 -------------------
 * Fixed Python packaging

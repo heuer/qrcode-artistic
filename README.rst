@@ -7,39 +7,38 @@ This `Segno <https://github.com/heuer/segno>`_ plugin converts a
 This plugin is not required to write PNG, EPS or PDF files. Segno's native
 implementations usually generate smaller files in less time. This plugin
 might be useful to modify the QR Codes (i.e. rotate or blur) or to save the
-QR Codes in an image format which is not supported by Segno.
-
-The resulting image is either a greyscale (PIL mode "1"), an indexed-color
-image (PIL mode "P") or an RGBA image. The mode depends on the provided
-(background) color values. The plugin chooses the optimal (minimal) mode
-automatically. Use the ``mode`` parameter to enforce a specific mode. Mode "RGB"
-is not supported, though.
-
+QR codes in an image format which is not supported by Segno.
 
 Usage:
 
 .. code-block:: python
 
     >>> import segno
-    >>> qr = segno.make('Hello world')
-    >>> pil_img = qr.to_pil()  # Greyscale image, default scale
-    >>> pil_img.save('example.png')
+    >>> qr = segno.make("One, two, three, four, one, two"
+                        "Let me tell you how it will be"
+                        "There's one for you, nineteen for me")
+    >>> img = qr.to_pil()  # Greyscale image, default scale
+    >>> img.save('example.png')
     >>> qr.to_pil(scale=10).show()  # Show img with scale 10
     >>> # Different scale
-    >>> pil_img = qr.to_pil(scale=10)
-    >>> pil_img.save('example-2.png')
+    >>> img = qr.to_pil(scale=3)
+    >>> img.save('example-2.png')
     >>> # Different scale and change module color
-    >>> pil_img = qr.to_pil(scale=10, color='darkblue')  # Indexed-color image
-    >>> pil_img.save('example-3.png')
-    >>> # Different scale and change module color and transparent background
-    >>> pil_img = qr.to_pil(scale=10, color='#36c', background=None)
-    >>> # transparency = 0 means that the first color in the palette should be
-    >>> # transparent. The background color is ALWAYS the first entry in the palette
-    >>> pil_img.save('example-4.png', transparency=0)
-    >>> # Different scale and change module color and yellow background
-    >>> # Enforce 'RGBA' mode since 'P' isn't supported by JPEG even if no color
-    >>> # uses the alpha channel
-    >>> qr.to_pil(scale=10, color='#36c', background='yellow', mode='RGBA').save('example-4.jpg')
-    >>> rotated_img = pil_img.rotate(45, expand=True)
-    >>> rotated_img.convert('RGB').save('example-5.jpg')
+    >>> img = qr.to_pil(scale=3, dark='darkblue')
+    >>> img.save('example-3.png')
+    >>> # Different scale and change dark and light module colors
+    >>> img = qr.to_pil(scale=3, dark='#36c', light=None)
+    >>> img.save('example-4.png')
+    >>> # Invert the example above
+    >>> img = qr.to_pil(scale=3, dark=None, light='#36c')
+    >>> img.save('example-5.png')
+    >>> # Save JPEG
+    >>> qr.to_pil(scale=3, dark='#36c', light='yellow').convert('RGB').save('example-6.jpg')
+    >>> rotated_img = img.rotate(3, expand=True)
+    >>> rotated_img.convert('RGB').save('example-7.jpg')
+    >>> # Multiple module colors
+    >>> qr = segno.make('Yellow Submarine', version=7, error='h')
+    >>> img = qr.to_pil(scale=4, dark='darkred', data_dark='darkorange',
+                        data_light='yellow')
+    >>> img.save('yellow-submarine.png')
 
