@@ -30,8 +30,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
               format_dark=False, format_light=False,
               alignment_dark=False, alignment_light=False,
               timing_dark=False, timing_light=False,
-              separator=False, dark_module=False,
-              quiet_zone=False, mode=None):
+              separator=False, dark_module=False, quiet_zone=False):
     """\
     Converts the provided `qrcode` into a PIL/Pillow image.
 
@@ -68,8 +67,6 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     :param separator: Color of the separator (default: same as ``light``)
     :param dark_module: Color of the dark module (default: same as ``dark``)
     :param quiet_zone: Color of the quiet zone modules (default: same as ``light``)
-    :param mode: A PIL Image mode. Either ``None`` (default) to autodetect the
-            mode or any Pillow Image mode.
     """
     buff = io.BytesIO()
     qrcode.save(buff, kind='png', scale=scale, border=border, dark=dark, light=light,
@@ -81,7 +78,4 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
                 timing_dark=timing_dark, timing_light=timing_light,
                 separator=separator, dark_module=dark_module, quiet_zone=quiet_zone)
     buff.seek(0)
-    img = Image.open(buff)
-    if mode is not None and mode != img.mode:
-        img = img.convert(mode)
-    return img
+    return Image.open(buff)

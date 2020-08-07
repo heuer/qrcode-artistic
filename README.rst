@@ -33,8 +33,8 @@ Usage:
     >>> img = qr.to_pil(scale=3, dark=None, light='#36c')
     >>> img.save('example-5.png')
     >>> # Save JPEG
-    >>> qr.to_pil(scale=3, dark='#36c', light='yellow', mode='RGB').save('example-6.jpg')
-    >>> rotated_img = pil_img.rotate(3, expand=True)
+    >>> qr.to_pil(scale=3, dark='#36c', light='yellow').convert('RGB').save('example-6.jpg')
+    >>> rotated_img = img.rotate(3, expand=True)
     >>> rotated_img.convert('RGB').save('example-7.jpg')
     >>> # Multiple module colors
     >>> qr = segno.make('Yellow Submarine', version=7, error='h')

@@ -45,14 +45,6 @@ def test_pil_greyscale_mirrored():
     assert qr.symbol_size() == img.size
 
 
-def test_pil_greyscale_but_force_palette():
-    qr = segno.make_qr('A')
-    img = qr.to_pil(dark='#000', mode='P')
-    assert img
-    assert 'P' == img.mode, 'Expected indexed-color image'
-    assert qr.symbol_size() == img.size
-
-
 def test_pil_pal_background():
     qr = segno.make('Hello')
     img = qr.to_pil(dark='white', light='green')
@@ -103,7 +95,7 @@ def test_pil_color_black_tranparent():
     assert 'transparency' in img.info
 
 
-def test_pil_color_white_tranparent():
+def test_pil_color_white_transparent():
     qr = segno.make_qr('A')
     img = qr.to_pil(dark='#fff', light=None)
     assert img
@@ -112,7 +104,7 @@ def test_pil_color_white_tranparent():
     assert 'transparency' in img.info
 
 
-def test_pil_color_other_tranparent():
+def test_pil_color_other_transparent():
     qr = segno.make_qr('A')
     img = qr.to_pil(dark='green', light=None)
     assert img
@@ -128,25 +120,6 @@ def test_pil_palette_autodetect():
     assert 'P' == img.mode, 'Expected indexed-color image'
     assert qr.symbol_size(border=0) == img.size
     assert 'transparency' in img.info
-
-
-def test_pil_mode_illegal():
-    qr = segno.make('Segno')
-    with pytest.raises(ValueError):
-        qr.to_pil(scale=10, mode='U')
-
-
-def test_pil_mode_rgb():
-    qr = segno.make('Segno')
-    img = qr.to_pil(scale=10, mode='RGB')
-    assert 'RGB' == img.mode
-
-
-def test_pil_mode_force_rgba():
-    qr = segno.make('Segno')
-    img = qr.to_pil(mode='RGBA')
-    assert 'RGBA' == img.mode
-    assert qr.symbol_size() == img.size
 
 
 if __name__ == '__main__':
