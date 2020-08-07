@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.0.0 -- 2020-08-dd
+1.0.0 -- 2020-08-07
 -------------------
 * Support for multiple module colors
 * Support for Segno's API >= 1.0.0
