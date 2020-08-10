@@ -78,7 +78,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     return Image.open(buff)
 
 
-def write_artistic(qrcode, background, target, mode=None, keep_colors=True,
+def write_artistic(qrcode, background, target, mode=None,
                    scale=3, border=None, dark='#000', light='#fff',
                    finder_dark=False, finder_light=False,
                    data_dark=False, data_light=False,
@@ -181,8 +181,6 @@ def write_artistic(qrcode, background, target, mode=None, keep_colors=True,
         ratio = min(max_bg_width / bg_width, max_bg_height / bg_height)
         bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
         res_images = [img.resize((bg_width, bg_height), Image.LANCZOS) for img in res_images]
-    if not keep_colors:
-        res_images = [img.convert('LA') for img in res_images]
     if mode is None and input_mode != 'RGBA':
         res_images = [img.convert(input_mode) for img in res_images]
     elif mode is not None:
