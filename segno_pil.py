@@ -132,7 +132,7 @@ def write_artistic(qrcode, background, target, mode=None,
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
-    target_supports_animation = target[target.rindex('.') + 1:] in ('gif', 'png')
+    target_supports_animation = target[target.rindex('.') + 1:] in ('gif', 'png', 'webp')
     try:
         is_animated = target_supports_animation and bg_img.is_animated
     except AttributeError:
