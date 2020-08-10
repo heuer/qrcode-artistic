@@ -14,8 +14,8 @@ Usage:
 .. code-block:: python
 
     >>> import segno
-    >>> qr = segno.make("One, two, three, four, one, two"
-                        "Let me tell you how it will be"
+    >>> qr = segno.make("One, two, three, four, one, two\n"
+                        "Let me tell you how it will be\n"
                         "There's one for you, nineteen for me")
     >>> img = qr.to_pil()  # Greyscale image, default scale
     >>> img.save('example.png')
