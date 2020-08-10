@@ -90,10 +90,9 @@ def write_artistic(qrcode, background, target, mode=None, keep_colors=True,
     """\
     Saves the QR code with the background image into target.
 
-
-
     :param background: Path to the background image.
-    :param scale: The scale. It will be multiplied by three.
+    :param background: Path to the target image.
+    :param scale: The scale. A minimum scale of 3 (default) is recommended.
     :param int border: Number indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
             will be used (``4`` for QR Codes, ``2`` for Micro QR Codes).

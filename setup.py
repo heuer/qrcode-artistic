@@ -26,6 +26,7 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
+
 version = re.search(r'''^__version__ = ["']([^'"]+)['"]''',
                     read('segno_pil.py'), flags=re.MULTILINE).group(1)
 
@@ -33,7 +34,7 @@ setup(
     name='segno-pil',
     version=version,
     url='https://github.com/heuer/segno-pil/',
-    description='PIL/Pillow plugin for the Segno (Micro) QR Code generator',
+    description='Pillow plugin for the Segno (Micro) QR Code generator',
     long_description=read('README.rst', 'CHANGES.rst'),
     license='BSD',
     author='Lars Heuer',
@@ -43,6 +44,7 @@ setup(
     entry_points="""
     [segno.plugin.converter]
     pil = segno_pil:write_pil
+    artistic = segno_pil:write_artistic
     """,
     install_requires=['segno', 'Pillow'],
     include_package_data=True,
