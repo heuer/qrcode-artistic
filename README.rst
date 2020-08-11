@@ -2,7 +2,8 @@ Artistic QR Codes
 -----------------
 
 This `Segno <https://github.com/heuer/segno>`_ plugin converts a
-(Micro) QR Code to a Pillow Image or into a (animated) QR code.
+(Micro) QR Code to a Pillow Image or into a QR code with a background
+image.
 
 This plugin is not required to write PNG, EPS or PDF files. Segno's native
 implementations usually generate smaller files in less time.
