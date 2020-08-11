@@ -1,11 +1,12 @@
 Changes
 =======
 
-2.0.0 -- 2020-08-dd
+2.0.0 -- 2020-08-11
 -------------------
 * Renamed segno-pil to qrcode-artistic
 * Fixed `#1 <https://github.com/heuer/segno-pil/issues/1>`_:
   Support for background images and animated QR codes.
+
 
 1.0.0 -- 2020-08-07
 -------------------
