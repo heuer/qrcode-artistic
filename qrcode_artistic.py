@@ -6,7 +6,8 @@
 # License: BSD License
 #
 """\
-Segno writer plugin to convert a (Micro) QR Code into a Pillow Image.
+Segno writer plugin to convert a (Micro) QR code into a Pillow Image and
+and to add (animated) background images to QR codes.
 """
 from __future__ import absolute_import, unicode_literals, division
 import io
@@ -26,7 +27,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
               timing_dark=False, timing_light=False,
               separator=False, dark_module=False, quiet_zone=False):
     """\
-    Converts the provided `qrcode` into a PIL/Pillow image.
+    Converts the provided `qrcode` into a Pillow image.
 
     If any color is ``None`` use the Image.info dict to detect which
     pixel / palette entry represents a transparent value.
@@ -78,7 +79,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     return Image.open(buff)
 
 
-def write_artistic(qrcode, background, target, mode=None,
+def write_artistic(qrcode, background, target, mode=None, format=None,
                    scale=3, border=None, dark='#000', light='#fff',
                    finder_dark=False, finder_light=False,
                    data_dark=False, data_light=False,
@@ -91,7 +92,10 @@ def write_artistic(qrcode, background, target, mode=None,
     Saves the QR code with the background image into target.
 
     :param background: Path to the background image.
-    :param background: Path to the target image.
+    :param target: Path to the target image.
+    :param str mode: `Image mode <https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes>`_
+    :param str format: Optional image format (i.e. 'PNG') if the target provides no
+                       information about the image format.
     :param scale: The scale. A minimum scale of 3 (default) is recommended.
     :param int border: Number indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
@@ -186,7 +190,8 @@ def write_artistic(qrcode, background, target, mode=None,
     elif mode is not None:
         res_images = [img.convert(mode) for img in res_images]
     if is_animated:
-        res_images[0].save(target, duration=durations, save_all=True,
+        res_images[0].save(target, format=format,
+                           duration=durations, save_all=True,
                            append_images=res_images[1:], loop=loop)
     else:
-        res_images[0].save(target)
+        res_images[0].save(target, format=format)

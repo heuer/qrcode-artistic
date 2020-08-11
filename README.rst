@@ -10,4 +10,10 @@ implementations usually generate smaller files in less time.
 This plugin might be useful to modify the QR Codes (i.e. rotate or blur)
 or to save the QR codes in an image format which is not supported by Segno.
 
+Furthermore, QR codes can be created with a background image.
+
+.. image:: https://github.com/heuer/qrcode-artistic/raw/develop/images/beatles.jpg
+
+.. image:: https://github.com/heuer/qrcode-artistic/raw/develop/images/beatles-animated.gif
+
 Documentation: https://segno.readthedocs.io/en/latest/artistic-qrcodes.html
