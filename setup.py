@@ -26,25 +26,28 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
+
 version = re.search(r'''^__version__ = ["']([^'"]+)['"]''',
-                    read('segno_pil.py'), flags=re.MULTILINE).group(1)
+                    read('qrcode_artistic.py'), flags=re.MULTILINE).group(1)
 
 setup(
-    name='segno-pil',
+    name='qrcode-artistic',
     version=version,
-    url='https://github.com/heuer/segno-pil/',
-    description='PIL/Pillow plugin for the Segno (Micro) QR Code generator',
+    url='https://github.com/heuer/qrcode-artistic/',
+    description='Artistic (Micro) QR Code plugin for Segno',
     long_description=read('README.rst', 'CHANGES.rst'),
+    long_description_content_type='text/x-rst',
     license='BSD',
     author='Lars Heuer',
     author_email='heuer@semagia.com',
     platforms=['any'],
-    py_modules=['segno_pil'],
+    py_modules=['qrcode_artistic'],
     entry_points="""
     [segno.plugin.converter]
-    pil = segno_pil:write_pil
+    pil = qrcode_artistic:write_pil
+    artistic = qrcode_artistic:write_artistic
     """,
-    install_requires=['segno', 'Pillow'],
+    install_requires=['segno>=1.0.2', 'Pillow'],
     include_package_data=True,
     keywords=['QR Code', 'Micro QR Code', 'ISO/IEC 18004',
               'ISO/IEC 18004:2006(E)', 'ISO/IEC 18004:2015(E)', 'PIL', 'Pillow'],
