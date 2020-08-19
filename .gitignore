@@ -1,9 +1,8 @@
 *.pyc
 .coverage
-.tox
-.idea
+.[nt]ox/
+.idea/
 *.egg-info
-htmlcov/*
 dist/
 build/
 venv/
