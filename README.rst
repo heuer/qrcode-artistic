@@ -13,9 +13,9 @@ or to save the QR codes in an image format which is not supported by Segno.
 
 Furthermore, QR codes can be created with a background image.
 
-.. image:: https://github.com/heuer/qrcode-artistic/raw/develop/images/beatles.jpg
+.. image:: https://github.com/heuer/qrcode-artistic/raw/master/images/beatles.jpg
 
-.. image:: https://github.com/heuer/qrcode-artistic/raw/develop/images/beatles-animated.gif
+.. image:: https://github.com/heuer/qrcode-artistic/raw/master/images/beatles-animated.gif
 
 
 Use ``pip`` to install from PyPI::
