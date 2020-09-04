@@ -1,6 +1,12 @@
 Changes
 =======
 
+2.0.1 -- 2020-09-04
+-------------------
+* Fixed `#4 <https://github.com/heuer/segno-pil/issues/4>`_:
+  QR codes may be blurred if the scaling factor is greater than 3.
+
+
 2.0.0 -- 2020-08-11
 -------------------
 * Renamed segno-pil to qrcode-artistic
