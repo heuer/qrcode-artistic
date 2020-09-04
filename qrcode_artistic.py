@@ -13,6 +13,7 @@ from __future__ import absolute_import, unicode_literals, division
 import io
 import math
 from PIL import Image, ImageDraw, ImageSequence
+import segno
 from segno import consts
 
 __version__ = '2.0.1.dev0'
@@ -35,6 +36,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     See `Colorful QR Codes <https://segno.readthedocs.io/en/stable/colorful-qrcodes.html>`_
     for a detailed description of all module colors.
 
+    :param segno.QRCode qrcode: The QR code.
     :param scale: Indicates the size of a single module (default: 1 which
             corresponds to 1 x 1 pixel per module).
     :param border: Integer indicating the size of the quiet zone.
@@ -91,11 +93,12 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     """\
     Saves the QR code with the background image into target.
 
+    :param segno.QRCode qrcode: The QR code.
     :param background: Path to the background image.
     :param target: Path to the target image.
     :param str mode: `Image mode <https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes>`_
     :param str format: Optional image format (i.e. 'PNG') if the target provides no
-                       information about the image format.
+                information about the image format.
     :param scale: The scale. A minimum scale of 3 (default) is recommended.
     :param int border: Number indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
@@ -123,7 +126,10 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     :param dark_module: Color of the dark module (default: same as ``dark``)
     :param quiet_zone: Color of the quiet zone modules (default: same as ``light``)
     """
-    qr_img = write_pil(qrcode, scale=3, border=border, dark=dark, light=light,
+    requested_scale = scale
+    while scale % 3:
+        scale += 1
+    qr_img = write_pil(qrcode, scale=scale, border=border, dark=dark, light=light,
                        finder_dark=finder_dark, finder_light=finder_light,
                        data_dark=data_dark, data_light=data_light,
                        version_dark=version_dark, version_light=version_light,
@@ -136,7 +142,8 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
-    target_supports_animation = target[target.rindex('.') + 1:] in ('gif', 'png', 'webp')
+    ext = target[target.rindex('.') + 1:].lower()
+    target_supports_animation = ext in ('gif', 'png', 'webp')
     try:
         is_animated = target_supports_animation and bg_img.is_animated
     except AttributeError:
@@ -150,7 +157,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     border = border if border else (2 if qrcode.is_micro else 4)
     # Maximal dimensions of the background image(s)
     # The background image is not drawn at the quiet zone of the QR Code, therefore border=0
-    max_bg_width, max_bg_height = qrcode.symbol_size(scale=3, border=0)
+    max_bg_width, max_bg_height = qrcode.symbol_size(scale=scale, border=0)
     bg_width, bg_height = bg_images[0].size
     ratio = min(max_bg_width / bg_width, max_bg_height / bg_height)
     bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
@@ -159,29 +166,35 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     for img in (img.resize((bg_width, bg_height), Image.LANCZOS) for img in bg_images):
         bg_img = bg_tpl.copy()
         tmp_bg_images.append(bg_img)
-        pos = int(math.ceil((max_bg_width - img.size[0]) / 2)), int(math.ceil((max_bg_height - img.size[1]) / 2))
+        pos = int(math.ceil((max_bg_width - img.size[0]) / 2)), \
+              int(math.ceil((max_bg_height - img.size[1]) / 2))
         bg_img.paste(img, pos)
     bg_images = tmp_bg_images
     res_images = [qr_img]
     res_images.extend([qr_img.copy() for i in range(len(bg_images) - 1)])
     # Cache drawing functions of the result image(s)
     draw_functions = [ImageDraw.Draw(img).point for img in res_images]
-    border_offset = border * 3
-    keep_modules = [consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT, consts.TYPE_SEPARATOR,
-                    consts.TYPE_ALIGNMENT_PATTERN_DARK, consts.TYPE_ALIGNMENT_PATTERN_LIGHT,
-                    consts.TYPE_TIMING_DARK, consts.TYPE_TIMING_LIGHT]
-    for i, row in enumerate(qrcode.matrix_iter(scale=3, border=0, verbose=True)):
-        for j, bit in enumerate(row):
-            if bit in keep_modules:
+    keep_modules = [consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT,
+                    consts.TYPE_SEPARATOR, consts.TYPE_ALIGNMENT_PATTERN_DARK,
+                    consts.TYPE_ALIGNMENT_PATTERN_LIGHT, consts.TYPE_TIMING_DARK,
+                    consts.TYPE_TIMING_LIGHT]
+    border_offset = border * scale
+    d = scale // 3
+    for i, row in enumerate(qrcode.matrix_iter(scale=scale, border=0, verbose=True)):
+        i_is_one = (i // d) % 3 == 1
+        for j, m in enumerate(row):
+            if m in keep_modules:
                 continue
-            if not (i % 3 == 1 and j % 3 == 1):
+            if not (i_is_one and (j // d) % 3 == 1):
                 for img_idx, img in enumerate(bg_images):
                     fill = img.getpixel((i, j))
                     if fill[3]:
-                        draw_functions[img_idx]((i + border_offset, j + border_offset), fill)
-    if scale != 3:
+                        draw_functions[img_idx]((i + border_offset,
+                                                 j + border_offset), fill)
+    if scale != requested_scale:
         bg_width, bg_height = max_bg_width, max_bg_height
-        max_bg_width, max_bg_height = qrcode.symbol_size(scale=scale, border=border)
+        max_bg_width, max_bg_height = qrcode.symbol_size(scale=requested_scale,
+                                                         border=border)
         ratio = min(max_bg_width / bg_width, max_bg_height / bg_height)
         bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
         res_images = [img.resize((bg_width, bg_height), Image.LANCZOS) for img in res_images]
