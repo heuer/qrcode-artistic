@@ -18,6 +18,11 @@ Furthermore, QR codes can be created with a background image.
 .. image:: https://github.com/heuer/qrcode-artistic/raw/master/images/beatles-animated.gif
 
 
+Transparency is supported as well
+
+.. image:: https://github.com/heuer/qrcode-artistic/raw/master/images/maggie.gif
+
+
 Use ``pip`` to install from PyPI::
 
     $ pip install qrcode-artistic
