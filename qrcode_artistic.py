@@ -13,7 +13,6 @@ from __future__ import absolute_import, unicode_literals, division
 import io
 import math
 from PIL import Image, ImageDraw, ImageSequence
-import segno
 from segno import consts
 
 __version__ = '2.0.1.dev0'
@@ -166,8 +165,8 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     for img in (img.resize((bg_width, bg_height), Image.LANCZOS) for img in bg_images):
         bg_img = bg_tpl.copy()
         tmp_bg_images.append(bg_img)
-        pos = int(math.ceil((max_bg_width - img.size[0]) / 2)), \
-              int(math.ceil((max_bg_height - img.size[1]) / 2))
+        pos = (int(math.ceil((max_bg_width - img.size[0]) / 2)),
+               int(math.ceil((max_bg_height - img.size[1]) / 2)))
         bg_img.paste(img, pos)
     bg_images = tmp_bg_images
     res_images = [qr_img]

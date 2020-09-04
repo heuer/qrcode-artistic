@@ -6,7 +6,7 @@
 # License: BSD License
 #
 """\
-Tests against Segno PIL/Pillow.
+Tests against QRCode.to_pil
 """
 from __future__ import absolute_import
 import pytest
