@@ -57,7 +57,7 @@ def lint(session):
 #
 # Release related tasks
 # 1. nox -e start-release -- version-number
-# 2. run tests, update docs, update changes
+# 2. run tests, update changes
 # 3. nox -e finish-release -- version-number
 # 4. git push / git push origin --tags
 # 5. nox -e build-release -- version-number
@@ -89,7 +89,7 @@ def start_release(session):
     git('checkout', '-b', release_branch, 'master')
     _change_version(session, prev_version, version)
     git('add', 'qrcode_artistic.py')
-    session.log('Now on branch "{}". Run the tests, run nox -e docs. Update CHANGES'.format(release_branch))
+    session.log('Now on branch "{}". Run the tests. Update CHANGES'.format(release_branch))
     session.log('When done, call nox -e finish-release -- {}'.format(version))
 
 
