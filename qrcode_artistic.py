@@ -153,7 +153,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
         loop = bg_img.info.get('loop', 0)
         bg_images.extend([frame.copy() for frame in ImageSequence.Iterator(bg_img)])
         durations = [img.info.get('duration', 0) for img in bg_images]
-    border = border if border else (2 if qrcode.is_micro else 4)
+    border = border if border is not None else qrcode.default_border_size
     # Maximal dimensions of the background image(s)
     # The background image is not drawn at the quiet zone of the QR Code, therefore border=0
     max_bg_width, max_bg_height = qrcode.symbol_size(scale=scale, border=0)
