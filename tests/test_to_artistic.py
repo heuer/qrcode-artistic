@@ -64,7 +64,7 @@ def test_animated():
 def test_transparency():
     content = "Day or night, he'll be there any time at all"
     qr = segno.make_qr(content)
-    scale = 7
+    scale = 3
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     qr.to_artistic(_img_src('transparency.png'), fn, scale=scale)
@@ -83,7 +83,7 @@ def test_transparency():
 def test_transparency_to_rgb():
     content = "You're a new and better man"
     qr = segno.make_qr(content)
-    scale = 11
+    scale = 5
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     src_fn = _img_src('transparency.png')
@@ -102,7 +102,7 @@ def test_transparency_to_rgb():
 def test_jpeg():
     content = "If you're down, he'll pick you up"
     qr = segno.make_qr(content)
-    scale = 27
+    scale = 7
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('jpg')
     qr.to_artistic(_img_src('sunflower.jpg'), fn, scale=scale)
@@ -117,7 +117,7 @@ def test_jpeg():
 def test_jpeg_to_png():
     content = "Doctor Robert"
     qr = segno.make_qr(content)
-    scale = 6
+    scale = 3
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     qr.to_artistic(_img_src('sunflower.jpg'), fn, scale=scale)
