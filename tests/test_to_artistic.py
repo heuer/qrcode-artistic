@@ -48,7 +48,7 @@ def _make_tmp_filename(ext):
 def test_animated():
     content = 'Ring my friend'
     qr = segno.make_qr(content)
-    scale = 9
+    scale = 8
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('gif')
     qr.to_artistic(_img_src('animated.gif'), fn, scale=scale)
