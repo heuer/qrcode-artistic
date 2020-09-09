@@ -13,7 +13,27 @@ import os
 import tempfile
 from PIL import Image
 import pytest
+_ZBAR = False
+try:
+    from pyzbar.pyzbar import decode as zbardecode
+    _ZBAR = True
+except ImportError:
+    pass
 import segno
+
+
+def decode(img):
+    import warnings
+    warnings.warn('pyzbar not available')
+    return True
+
+
+if _ZBAR:
+    def decode(img):
+        decoded = zbardecode(img)
+        assert 1 == len(decoded)
+        assert 'QRCODE' == decoded[0].type
+        return decoded[0].data.decode('utf-8')
 
 
 def _img_src(name):
@@ -22,13 +42,13 @@ def _img_src(name):
 
 def _make_tmp_filename(ext):
     f = tempfile.NamedTemporaryFile('wb', suffix='.' + ext, delete=False)
-    print(f.name)
     return f.name
 
 
 def test_animated():
-    qr = segno.make_qr('A')
-    scale = 4
+    content = 'Ring my friend'
+    qr = segno.make_qr(content)
+    scale = 9
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('gif')
     qr.to_artistic(_img_src('animated.gif'), fn, scale=scale)
@@ -38,11 +58,13 @@ def test_animated():
         assert img.is_animated
     finally:
         os.remove(fn)
+    assert content == decode(img)
 
 
 def test_transparency():
-    qr = segno.make_qr('A')
-    scale = 9
+    content = "Day or night, he'll be there any time at all"
+    qr = segno.make_qr(content)
+    scale = 7
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     qr.to_artistic(_img_src('transparency.png'), fn, scale=scale)
@@ -55,11 +77,13 @@ def test_transparency():
             pass
     finally:
         os.remove(fn)
+    assert content == decode(img)
 
 
 def test_transparency_to_rgb():
-    qr = segno.make_qr('A')
-    scale = 9
+    content = "You're a new and better man"
+    qr = segno.make_qr(content)
+    scale = 11
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     src_fn = _img_src('transparency.png')
@@ -72,10 +96,12 @@ def test_transparency_to_rgb():
         assert 'RGB' == img.mode
     finally:
         os.remove(fn)
+    assert content == decode(img)
 
 
 def test_jpeg():
-    qr = segno.make_qr('A')
+    content = "If you're down, he'll pick you up"
+    qr = segno.make_qr(content)
     scale = 27
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('jpg')
@@ -85,11 +111,13 @@ def test_jpeg():
         assert (width, height) == img.size
     finally:
         os.remove(fn)
+    assert content == decode(img)
 
 
 def test_jpeg_to_png():
-    qr = segno.make_qr('A')
-    scale = 5
+    content = "Doctor Robert"
+    qr = segno.make_qr(content)
+    scale = 6
     width, height = qr.symbol_size(scale=scale)
     fn = _make_tmp_filename('png')
     qr.to_artistic(_img_src('sunflower.jpg'), fn, scale=scale)
@@ -98,6 +126,7 @@ def test_jpeg_to_png():
         assert (width, height) == img.size
     finally:
         os.remove(fn)
+    assert content == decode(img)
 
 
 if __name__ == '__main__':
