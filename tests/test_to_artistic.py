@@ -49,7 +49,10 @@ def test_transparency():
     img = Image.open(fn)
     try:
         assert (width, height) == img.size
-        assert not img.is_animated
+        try:
+            assert not img.is_animated
+        except AttributeError:
+            pass
     finally:
         os.remove(fn)
 

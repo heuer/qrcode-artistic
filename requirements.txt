@@ -1,3 +1,2 @@
 segno>=1.0.2
-Pillow<7.0.0; python_version == '2.7'
-Pillow; python_version > '3.0'
+Pillow
