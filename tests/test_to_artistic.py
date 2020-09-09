@@ -57,6 +57,23 @@ def test_transparency():
         os.remove(fn)
 
 
+def test_transparency_to_rgb():
+    qr = segno.make_qr('A')
+    scale = 9
+    width, height = qr.symbol_size(scale=scale)
+    fn = _make_tmp_filename('png')
+    src_fn = _img_src('transparency.png')
+    img_src = Image.open(src_fn)
+    assert 'RGBA' == img_src.mode
+    qr.to_artistic(src_fn, fn, scale=scale, mode='RGB')
+    img = Image.open(fn)
+    try:
+        assert (width, height) == img.size
+        assert 'RGB' == img.mode
+    finally:
+        os.remove(fn)
+
+
 def test_jpeg():
     qr = segno.make_qr('A')
     scale = 27
