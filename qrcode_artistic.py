@@ -97,8 +97,10 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     :param target: Path to the target image.
     :param str mode: `Image mode <https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes>`_
     :param str format: Optional image format (i.e. 'PNG') if the target provides no
-                information about the image format.
+            information about the image format.
     :param scale: The scale. A minimum scale of 3 (default) is recommended.
+            The best results are achieved with a scaling of more than 3 and a
+            scaling divisible by 3.
     :param int border: Number indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
             will be used (``4`` for QR Codes, ``2`` for Micro QR Codes).
