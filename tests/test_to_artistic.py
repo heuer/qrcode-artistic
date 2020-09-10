@@ -13,27 +13,27 @@ import os
 import tempfile
 from PIL import Image
 import pytest
+import segno
 _ZBAR = False
 try:
     from pyzbar.pyzbar import decode as zbardecode
     _ZBAR = True
 except ImportError:
     pass
-import segno
 
 
 def decode(img):
-    import warnings
-    warnings.warn('pyzbar not available')
-    return True
+    decoded = zbardecode(img)
+    assert 1 == len(decoded)
+    assert 'QRCODE' == decoded[0].type
+    return decoded[0].data.decode('utf-8')
 
 
-if _ZBAR:
-    def decode(img):
-        decoded = zbardecode(img)
-        assert 1 == len(decoded)
-        assert 'QRCODE' == decoded[0].type
-        return decoded[0].data.decode('utf-8')
+if not _ZBAR:
+    def decode(img):  # noqa: F811
+        import warnings
+        warnings.warn('pyzbar not available')
+        return True
 
 
 def _img_src(name):
