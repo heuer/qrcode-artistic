@@ -80,7 +80,7 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     return Image.open(buff)
 
 
-def write_artistic(qrcode, background, target, mode=None, format=None,
+def write_artistic(qrcode, background, target, mode=None, format=None, kind=None,
                    scale=3, border=None, dark='#000', light='#fff',
                    finder_dark=False, finder_light=False,
                    data_dark=False, data_light=False,
@@ -94,9 +94,12 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
 
     :param segno.QRCode qrcode: The QR code.
     :param background: Path to the background image.
-    :param target: Path to the target image.
+    :param target: A filename or a writable file-like object with a
+                    ``name`` attribute. Use the ``kind`` parameter if
+                    `target` is a :py:class:`io.BytesIO` stream which does not
+                    have ``name`` attribute.
     :param str mode: `Image mode <https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes>`_
-    :param str format: Optional image format (i.e. 'PNG') if the target provides no
+    :param str kind: Optional image format (i.e. 'PNG') if the target provides no
             information about the image format.
     :param scale: The scale. A minimum scale of 3 (default) is recommended.
             The best results are achieved with a scaling of more than 3 and a
@@ -139,11 +142,22 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
                        timing_dark=timing_dark, timing_light=timing_light,
                        separator=separator, dark_module=dark_module,
                        quiet_zone=quiet_zone).convert('RGBA')
+    if format:
+        import warnings
+        warnings.warn('Using format is deprecated, use "kind"', DeprecationWarning)
+        kind = format
     bg_img = Image.open(background)
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
-    ext = target[target.rindex('.') + 1:].lower()
+    if kind is None:
+        try:
+            fname = target.name
+        except AttributeError:
+            fname = target
+        ext = fname[fname.rfind('.') + 1:].lower()
+    else:
+        ext = kind.lower()
     target_supports_animation = ext in ('gif', 'png', 'webp')
     try:
         is_animated = target_supports_animation and bg_img.is_animated
@@ -204,8 +218,8 @@ def write_artistic(qrcode, background, target, mode=None, format=None,
     elif mode is not None:
         res_images = [img.convert(mode) for img in res_images]
     if is_animated:
-        res_images[0].save(target, format=format,
+        res_images[0].save(target, format=kind,
                            duration=durations, save_all=True,
                            append_images=res_images[1:], loop=loop)
     else:
-        res_images[0].save(target, format=format)
+        res_images[0].save(target, format=kind)

@@ -10,6 +10,7 @@ Tests against QRCode.to_artistic
 """
 from __future__ import absolute_import
 import os
+import io
 import tempfile
 from PIL import Image
 import pytest
@@ -45,21 +46,33 @@ def _make_tmp_filename(ext):
     return f.name
 
 
+def test_deprecated_format():
+    content = "Well, well, well, you're feeling fine"
+    qr = segno.make_qr(content)
+    scale = 7
+    width, height = qr.symbol_size(scale=scale)
+    out = io.BytesIO()
+    with pytest.deprecated_call():
+        qr.to_artistic(_img_src('animated.gif'), out, format='gif', scale=scale)
+    out.seek(0)
+    img = Image.open(out)
+    assert (width, height) == img.size
+    assert img.is_animated
+    assert content == decode(img)
+
+
 def test_animated():
     content = 'Ring my friend'
     qr = segno.make_qr(content)
     scale = 8
     width, height = qr.symbol_size(scale=scale)
-    fn = _make_tmp_filename('gif')
-    qr.to_artistic(_img_src('animated.gif'), fn, scale=scale)
-    img = Image.open(fn)
-    try:
-        assert (width, height) == img.size
-        assert img.is_animated
-        assert content == decode(img)
-    finally:
-        img.close()
-        os.remove(fn)
+    out = io.BytesIO()
+    qr.to_artistic(_img_src('animated.gif'), out, kind='gif', scale=scale)
+    out.seek(0)
+    img = Image.open(out)
+    assert (width, height) == img.size
+    assert img.is_animated
+    assert content == decode(img)
 
 
 def test_transparency():

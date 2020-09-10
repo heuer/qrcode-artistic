@@ -1,6 +1,13 @@
 Changes
 =======
 
+2.x.y -- 2020-09-dd
+-------------------
+* Deprecated optional "format" keyword, use "kind" for
+  ``QRCode.to_artistic``
+* Support ``io.BytesIO`` or a file-like target in ``QRCode.to_artistic``
+
+
 2.0.1 -- 2020-09-04
 -------------------
 * Fixed `#4 <https://github.com/heuer/segno-pil/issues/4>`_:
