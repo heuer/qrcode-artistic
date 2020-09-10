@@ -56,9 +56,10 @@ def test_animated():
     try:
         assert (width, height) == img.size
         assert img.is_animated
+        assert content == decode(img)
     finally:
+        img.close()
         os.remove(fn)
-    assert content == decode(img)
 
 
 def test_transparency():
@@ -75,9 +76,10 @@ def test_transparency():
             assert not img.is_animated
         except AttributeError:
             pass
+        assert content == decode(img)
     finally:
+        img.close()
         os.remove(fn)
-    assert content == decode(img)
 
 
 def test_transparency_to_rgb():
@@ -94,9 +96,10 @@ def test_transparency_to_rgb():
     try:
         assert (width, height) == img.size
         assert 'RGB' == img.mode
+        assert content == decode(img)
     finally:
+        img.close()
         os.remove(fn)
-    assert content == decode(img)
 
 
 def test_jpeg():
@@ -109,9 +112,10 @@ def test_jpeg():
     img = Image.open(fn)
     try:
         assert (width, height) == img.size
+        assert content == decode(img)
     finally:
+        img.close()
         os.remove(fn)
-    assert content == decode(img)
 
 
 def test_jpeg_to_png():
@@ -124,9 +128,10 @@ def test_jpeg_to_png():
     img = Image.open(fn)
     try:
         assert (width, height) == img.size
+        assert content == decode(img)
     finally:
+        img.close()
         os.remove(fn)
-    assert content == decode(img)
 
 
 if __name__ == '__main__':
