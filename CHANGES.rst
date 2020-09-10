@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.x.y -- 2020-09-dd
+2.1.0 -- 2020-09-10
 -------------------
 * Deprecated optional "format" keyword, use "kind" for
   ``QRCode.to_artistic``
