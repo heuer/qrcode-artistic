@@ -15,7 +15,7 @@ import math
 from PIL import Image, ImageDraw, ImageSequence
 from segno import consts
 
-__version__ = '2.1.0'
+__version__ = '2.1.1.dev'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
