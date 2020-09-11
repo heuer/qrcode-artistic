@@ -21,17 +21,23 @@ try:
     _ZBAR = True
 except ImportError:
     pass
+_PYTHON2 = False
+try:
+    unicode
+    _PYTHON2 = True
+except NameError:
+    pass
 
 
-def decode(img):
+def decode(img, content):
     decoded = zbardecode(img)
     assert 1 == len(decoded)
     assert 'QRCODE' == decoded[0].type
-    return decoded[0].data.decode('utf-8')
+    return content == decoded[0].data.decode('utf-8')
 
 
 if not _ZBAR:
-    def decode(img):  # noqa: F811
+    def decode(img, content):  # noqa: F811
         import warnings
         warnings.warn('pyzbar not available')
         return True
@@ -58,7 +64,7 @@ def test_deprecated_format():
     img = Image.open(out)
     assert (width, height) == img.size
     assert img.is_animated
-    assert content == decode(img)
+    assert decode(img, content)
 
 
 def test_animated():
@@ -72,7 +78,7 @@ def test_animated():
     img = Image.open(out)
     assert (width, height) == img.size
     assert img.is_animated
-    assert content == decode(img)
+    assert decode(img, content)
 
 
 def test_transparency():
@@ -89,7 +95,7 @@ def test_transparency():
             assert not img.is_animated
         except AttributeError:
             pass
-        assert content == decode(img)
+        assert decode(img, content)
     finally:
         img.close()
         os.remove(fn)
@@ -109,7 +115,7 @@ def test_transparency_to_rgb():
     try:
         assert (width, height) == img.size
         assert 'RGB' == img.mode
-        assert content == decode(img)
+        assert decode(img, content)
     finally:
         img.close()
         os.remove(fn)
@@ -125,7 +131,7 @@ def test_jpeg():
     img = Image.open(fn)
     try:
         assert (width, height) == img.size
-        assert content == decode(img)
+        assert decode(img, content)
     finally:
         img.close()
         os.remove(fn)
@@ -141,10 +147,24 @@ def test_jpeg_to_png():
     img = Image.open(fn)
     try:
         assert (width, height) == img.size
-        assert content == decode(img)
+        assert decode(img, content)
     finally:
         img.close()
         os.remove(fn)
+
+
+@pytest.mark.skipif(_PYTHON2, reason='Requires Python >= 3.6')
+def test_svg_to_png():
+    content = "Ring my friend I said you'd call"
+    qr = segno.make_qr(content)
+    scale = 36
+    width, height = qr.symbol_size(scale=scale)
+    out = io.BytesIO()
+    qr.to_artistic(_img_src('svg-file.svg'), out, scale=scale, kind='png')
+    out.seek(0)
+    img = Image.open(out)
+    assert (width, height) == img.size
+    assert decode(img, content)
 
 
 if __name__ == '__main__':

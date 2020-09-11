@@ -14,17 +14,25 @@ import io
 import math
 from PIL import Image, ImageDraw, ImageSequence
 from segno import consts
+try:
+    from PIL import UnidentifiedImageError
+except ImportError:
+    UnidentifiedImageError = IOError
+_SVG_SUPPORT = False
+try:
+    import cairosvg
+    _SVG_SUPPORT = True
+except ImportError:
+    pass
 
 __version__ = '2.1.1.dev'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
-              finder_dark=False, finder_light=False,
-              data_dark=False, data_light=False,
-              version_dark=False, version_light=False,
-              format_dark=False, format_light=False,
-              alignment_dark=False, alignment_light=False,
-              timing_dark=False, timing_light=False,
+              finder_dark=False, finder_light=False, data_dark=False,
+              data_light=False, version_dark=False, version_light=False,
+              format_dark=False, format_light=False, alignment_dark=False,
+              alignment_light=False, timing_dark=False, timing_light=False,
               separator=False, dark_module=False, quiet_zone=False):
     """\
     Converts the provided `qrcode` into a Pillow image.
@@ -68,8 +76,8 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
     # Versions < 1.0.0 used Pillow to draw the QR code but there was no benefit,
     # just duplicate code
     buff = io.BytesIO()
-    qrcode.save(buff, kind='png', scale=scale, border=border, dark=dark, light=light,
-                finder_dark=finder_dark, finder_light=finder_light,
+    qrcode.save(buff, kind='png', scale=scale, border=border, dark=dark,
+                light=light, finder_dark=finder_dark, finder_light=finder_light,
                 data_dark=data_dark, data_light=data_light,
                 version_dark=version_dark, version_light=version_light,
                 format_dark=format_dark, format_light=format_light,
@@ -82,12 +90,10 @@ def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
 
 def write_artistic(qrcode, background, target, mode=None, format=None, kind=None,
                    scale=3, border=None, dark='#000', light='#fff',
-                   finder_dark=False, finder_light=False,
-                   data_dark=False, data_light=False,
-                   version_dark=False, version_light=False,
-                   format_dark=False, format_light=False,
-                   alignment_dark=False, alignment_light=False,
-                   timing_dark=False, timing_light=False,
+                   finder_dark=False, finder_light=False, data_dark=False,
+                   data_light=False, version_dark=False, version_light=False,
+                   format_dark=False, format_light=False, alignment_dark=False,
+                   alignment_light=False, timing_dark=False, timing_light=False,
                    separator=False, dark_module=False, quiet_zone=False):
     """\
     Saves the QR code with the background image into target.
@@ -142,11 +148,17 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
                        timing_dark=timing_dark, timing_light=timing_light,
                        separator=separator, dark_module=dark_module,
                        quiet_zone=quiet_zone).convert('RGBA')
+    # Maximal dimensions of the background image(s)
+    # The background image is not drawn at the quiet zone of the QR Code, therefore border=0
+    max_bg_width, max_bg_height = qrcode.symbol_size(scale=scale, border=0)
     if format:
         import warnings
         warnings.warn('Using format is deprecated, use "kind"', DeprecationWarning)
         kind = format
-    bg_img = Image.open(background)
+    try:
+        bg_img = Image.open(background)
+    except UnidentifiedImageError:
+        bg_img = _svg_to_png(background, width=max_bg_width, height=max_bg_height)
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
@@ -170,9 +182,6 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
         bg_images.extend([frame.copy() for frame in ImageSequence.Iterator(bg_img)])
         durations = [img.info.get('duration', 0) for img in bg_images]
     border = border if border is not None else qrcode.default_border_size
-    # Maximal dimensions of the background image(s)
-    # The background image is not drawn at the quiet zone of the QR Code, therefore border=0
-    max_bg_width, max_bg_height = qrcode.symbol_size(scale=scale, border=0)
     bg_width, bg_height = bg_images[0].size
     ratio = min(max_bg_width / bg_width, max_bg_height / bg_height)
     bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
@@ -223,3 +232,37 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
                            append_images=res_images[1:], loop=loop)
     else:
         res_images[0].save(target, format=kind)
+
+
+def _svg_to_png(source, width, height):
+    """\
+    Converts the SVG source into a PNG and returns a PIL.Image
+
+    :param source: The SVG source.
+    :param width: The target width.
+    :param height: The target height.
+    :return: Image.
+    """
+    out = io.BytesIO()
+    try:
+        source.name
+    except AttributeError:
+        pass
+    with open(source, 'rb') as f:
+        cairosvg.svg2png(file_obj=f, write_to=out)
+    out.seek(0)
+    img = Image.open(out)
+    svg_width, svg_height = img.size
+    ratio = min(width / svg_width, height / svg_height)
+    w, h = int(svg_width * ratio), int(svg_height * ratio)
+    out = io.BytesIO()
+    with open(source, 'rb') as f:
+        cairosvg.svg2png(file_obj=f, write_to=out, output_width=w,
+                         output_height=h)
+    out.seek(0)
+    return Image.open(out)
+
+
+if not _SVG_SUPPORT:
+    def _svg_to_png(source, width=None, height=None):  # noqa: F811
+        raise ValueError('cairosvg is required for SVG support')

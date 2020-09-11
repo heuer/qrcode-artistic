@@ -14,3 +14,9 @@ sunflower.jpg
 =============
 
 Source: <https://commons.wikimedia.org/wiki/Category:JPEG_file_format?uselang=de#/media/File:Sunflower_as.jpg>
+
+
+svg-file.svg
+============
+
+Source: <https://en.wikipedia.org/wiki/File:Firefox_logo,_2019.svg>
