@@ -15,6 +15,10 @@ import math
 from PIL import Image, ImageDraw, ImageSequence
 from segno import consts
 try:
+    from PIL.Image.Resampling import LANCZOS
+except ImportError:
+    from PIL.Image import LANCZOS
+try:
     from PIL import UnidentifiedImageError
 except ImportError:
     UnidentifiedImageError = IOError
@@ -107,9 +111,9 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     :param str mode: `Image mode <https://pillow.readthedocs.io/en/stable/handbook/concepts.html#modes>`_
     :param str kind: Optional image format (i.e. 'PNG') if the target provides no
             information about the image format.
-    :param scale: The scale. A minimum scale of 3 (default) is recommended.
+    :param int scale: The scale. A minimum scale of 3 (default) is recommended.
             The best results are achieved with a scaling of more than 3 and a
-            scaling divisible by 3.
+            scaling divisible by 3. If a floating number is provided it is converted to an integer (1.5 becomes 1)
     :param int border: Number indicating the size of the quiet zone.
             If set to ``None`` (default), the recommended border size
             will be used (``4`` for QR Codes, ``2`` for Micro QR Codes).
@@ -136,6 +140,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     :param dark_module: Color of the dark module (default: same as ``dark``)
     :param quiet_zone: Color of the quiet zone modules (default: same as ``light``)
     """
+    scale = int(scale)
     requested_scale = scale
     while scale % 3:
         scale += 1
@@ -155,10 +160,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
         import warnings
         warnings.warn('Using format is deprecated, use "kind"', DeprecationWarning)
         kind = format
-    try:
-        bg_img = Image.open(background)
-    except UnidentifiedImageError:
-        bg_img = _svg_to_png(background, width=max_bg_width, height=max_bg_height)
+    bg_img = Image.open(background)
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
@@ -187,7 +189,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
     bg_tpl = Image.new('RGBA', (max_bg_width, max_bg_height), (255, 0, 0, 0))
     tmp_bg_images = []
-    for img in (img.resize((bg_width, bg_height), Image.LANCZOS) for img in bg_images):
+    for img in (img.resize((bg_width, bg_height), LANCZOS) for img in bg_images):
         bg_img = bg_tpl.copy()
         tmp_bg_images.append(bg_img)
         pos = (int(math.ceil((max_bg_width - img.size[0]) / 2)),
@@ -213,56 +215,19 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
                 for img_idx, img in enumerate(bg_images):
                     fill = img.getpixel((i, j))
                     if fill[3]:
-                        draw_functions[img_idx]((i + border_offset,
-                                                 j + border_offset), fill)
+                        draw_functions[img_idx]((i + border_offset, j + border_offset), fill)
     if scale != requested_scale:
         bg_width, bg_height = max_bg_width, max_bg_height
-        max_bg_width, max_bg_height = qrcode.symbol_size(scale=requested_scale,
-                                                         border=border)
+        max_bg_width, max_bg_height = qrcode.symbol_size(scale=requested_scale, border=border)
         ratio = min(max_bg_width / bg_width, max_bg_height / bg_height)
         bg_width, bg_height = int(bg_width * ratio), int(bg_height * ratio)
-        res_images = [img.resize((bg_width, bg_height), Image.LANCZOS) for img in res_images]
+        res_images = [img.resize((bg_width, bg_height), LANCZOS) for img in res_images]
     if mode is None and input_mode != 'RGBA':
         res_images = [img.convert(input_mode) for img in res_images]
     elif mode is not None:
         res_images = [img.convert(mode) for img in res_images]
     if is_animated:
-        res_images[0].save(target, format=kind,
-                           duration=durations, save_all=True,
-                           append_images=res_images[1:], loop=loop)
+        res_images[0].save(target, format=kind, uration=durations, save_all=True, append_images=res_images[1:],
+                           loop=loop)
     else:
         res_images[0].save(target, format=kind)
-
-
-def _svg_to_png(source, width, height):
-    """\
-    Converts the SVG source into a PNG and returns a PIL.Image
-
-    :param source: The SVG source.
-    :param width: The target width.
-    :param height: The target height.
-    :return: Image.
-    """
-    out = io.BytesIO()
-    try:
-        source.name
-    except AttributeError:
-        pass
-    with open(source, 'rb') as f:
-        cairosvg.svg2png(file_obj=f, write_to=out)
-    out.seek(0)
-    img = Image.open(out)
-    svg_width, svg_height = img.size
-    ratio = min(width / svg_width, height / svg_height)
-    w, h = int(svg_width * ratio), int(svg_height * ratio)
-    out = io.BytesIO()
-    with open(source, 'rb') as f:
-        cairosvg.svg2png(file_obj=f, write_to=out, output_width=w,
-                         output_height=h)
-    out.seek(0)
-    return Image.open(out)
-
-
-if not _SVG_SUPPORT:
-    def _svg_to_png(source, width=None, height=None):  # noqa: F811
-        raise ValueError('cairosvg is required for SVG support')

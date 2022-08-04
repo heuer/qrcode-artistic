@@ -153,18 +153,20 @@ def test_jpeg_to_png():
         os.remove(fn)
 
 
-@pytest.mark.skipif(_PYTHON2, reason='Requires Python >= 3.6')
-def test_svg_to_png():
-    content = "Ring my friend I said you'd call"
+def test_issue_11():
+    # https://github.com/heuer/qrcode-artistic/issues/11
+    content = "Day or night, he'll be there any time at all"
     qr = segno.make_qr(content)
-    scale = 36
-    width, height = qr.symbol_size(scale=scale)
-    out = io.BytesIO()
-    qr.to_artistic(_img_src('svg-file.svg'), out, scale=scale, kind='png')
-    out.seek(0)
-    img = Image.open(out)
-    assert (width, height) == img.size
-    assert decode(img, content)
+    scale = 3.5
+    width, height = qr.symbol_size(scale=int(scale))
+    fn = _make_tmp_filename('png')
+    qr.to_artistic(_img_src('transparency.png'), fn, scale=scale)
+    img = Image.open(fn)
+    try:
+        assert (width, height) == img.size
+    finally:
+        img.close()
+        os.remove(fn)
 
 
 if __name__ == '__main__':

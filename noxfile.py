@@ -15,11 +15,11 @@ from itertools import chain
 import shutil
 import nox
 
-nox.options.sessions = ['test-2.7', 'test-3.7']
-default_py = '3.7'
+_PY_DEFAULT_VERSION = '3.10'
+nox.options.sessions = ['test-2.7', 'test-{}'.format(_PY_DEFAULT_VERSION)]
 
 
-@nox.session(python=['2.7', '3.7', '3.8'])
+@nox.session(python=['2.7', '3.7', '3.8', '3.9', '3.10'])
 def test(session):
     """\
     Run test suite.
@@ -29,7 +29,7 @@ def test(session):
     session.run('py.test')
 
 
-@nox.session(python=default_py)
+@nox.session(python=_PY_DEFAULT_VERSION)
 def coverage(session):
     """\
     Run coverage.
@@ -44,7 +44,7 @@ def coverage(session):
     cover('html', '-d', output_dir)
 
 
-@nox.session(python=default_py)
+@nox.session(python=_PY_DEFAULT_VERSION)
 def lint(session):
     """\
     Run flake8
@@ -65,7 +65,7 @@ def lint(session):
 #
 
 
-@nox.session(name='start-release', python=default_py)
+@nox.session(name='start-release', python=_PY_DEFAULT_VERSION)
 def start_release(session):
     """\
     Prepares a release.
@@ -93,7 +93,7 @@ def start_release(session):
     session.log('When done, call nox -e finish-release -- {}'.format(version))
 
 
-@nox.session(name='finish-release', python=default_py)
+@nox.session(name='finish-release', python=_PY_DEFAULT_VERSION)
 def finish_release(session):
     """\
     Finishes the release.
@@ -119,7 +119,7 @@ def finish_release(session):
                 'nox -e build-release -- {} / nox -e upload-release'.format(version))
 
 
-@nox.session(name='build-release', python=default_py)
+@nox.session(name='build-release', python=_PY_DEFAULT_VERSION)
 def build_release(session):
     """\
     Builds a release: Creates sdist and wheel
@@ -135,7 +135,7 @@ def build_release(session):
     git('checkout', 'master')
 
 
-@nox.session(name='upload-release', python=default_py)
+@nox.session(name='upload-release', python=_PY_DEFAULT_VERSION)
 def upload_release(session):
     """\
     Uploads a release to PyPI

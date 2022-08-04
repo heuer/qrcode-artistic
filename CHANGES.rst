@@ -1,6 +1,15 @@
 Changes
 =======
 
+2.1.1 -- 2022-08-dd
+-------------------
+* Fixed `#11 <https://github.com/heuer/qrcode-artistic/issues/11>`_
+  Providing floats for scale may result into an infinite loop;
+  reported by `Abe Winter <https://github.com/abe-winter>`_
+* Avoid to use deprecated Pillow constants
+* Updated default Python version to 3.10 for test suite (Py 2.7 is still supported).
+
+
 2.1.0 -- 2020-09-10
 -------------------
 * Deprecated optional "format" keyword, use "kind" for
