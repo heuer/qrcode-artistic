@@ -169,5 +169,19 @@ def test_issue_11():
         os.remove(fn)
 
 
+@pytest.mark.skipif(_PYTHON2, reason='Requires Python >= 3.6')
+def test_svg_to_png():
+    content = "Ring my friend I said you'd call"
+    qr = segno.make_qr(content)
+    scale = 36
+    width, height = qr.symbol_size(scale=scale)
+    out = io.BytesIO()
+    qr.to_artistic(_img_src('svg-file.svg'), out, scale=scale, kind='png')
+    out.seek(0)
+    img = Image.open(out)
+    assert (width, height) == img.size
+    assert decode(img, content)
+
+
 if __name__ == '__main__':
     pytest.main([__file__])

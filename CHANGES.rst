@@ -6,14 +6,17 @@ Changes
 * Fixed `#11 <https://github.com/heuer/qrcode-artistic/issues/11>`_
   Providing floats for scale may result into an infinite loop;
   reported by `Abe Winter <https://github.com/abe-winter>`_
+* Fixed `#5 <https://github.com/heuer/qrcode-artistic/issues/5>`_
+  Added support for SVG backgrounds iff cairosvg is available;
+  suggested by `Markus Ueberall <https://github.com/m-ueberall>`_
 * Avoid to use deprecated Pillow constants
-* Updated default Python version to 3.10 for test suite (Py 2.7 is still supported).
+* Updated default Python version to 3.10 for test suite (Py 2.7 is still supported),
+  added support for PyPy3 to the test suite
 
 
 2.1.0 -- 2020-09-10
 -------------------
-* Deprecated optional "format" keyword, use "kind" for
-  ``QRCode.to_artistic``
+* Deprecated optional "format" keyword, use "kind" for ``QRCode.to_artistic``
 * Support ``io.BytesIO`` or a file-like target in ``QRCode.to_artistic``
 
 
@@ -36,8 +39,7 @@ Changes
 * Support for Segno's API >= 1.0.0
 * API breaking changes:
 
-  - Changed parameter "color" to "dark" and "background" to "light"
-    to match Segno's API
+  - Changed parameter "color" to "dark" and "background" to "light" to match Segno's API
   - Removed "mode" parameter
 
 

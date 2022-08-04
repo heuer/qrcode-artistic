@@ -144,14 +144,11 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     requested_scale = scale
     while scale % 3:
         scale += 1
-    qr_img = write_pil(qrcode, scale=scale, border=border, dark=dark, light=light,
-                       finder_dark=finder_dark, finder_light=finder_light,
-                       data_dark=data_dark, data_light=data_light,
-                       version_dark=version_dark, version_light=version_light,
-                       format_dark=format_dark, format_light=format_light,
-                       alignment_dark=alignment_dark, alignment_light=alignment_light,
-                       timing_dark=timing_dark, timing_light=timing_light,
-                       separator=separator, dark_module=dark_module,
+    qr_img = write_pil(qrcode, scale=scale, border=border, dark=dark, light=light, finder_dark=finder_dark,
+                       finder_light=finder_light, data_dark=data_dark, data_light=data_light, version_dark=version_dark,
+                       version_light=version_light, format_dark=format_dark, format_light=format_light,
+                       alignment_dark=alignment_dark, alignment_light=alignment_light, timing_dark=timing_dark,
+                       timing_light=timing_light, separator=separator, dark_module=dark_module,
                        quiet_zone=quiet_zone).convert('RGBA')
     # Maximal dimensions of the background image(s)
     # The background image is not drawn at the quiet zone of the QR Code, therefore border=0
@@ -160,7 +157,10 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
         import warnings
         warnings.warn('Using format is deprecated, use "kind"', DeprecationWarning)
         kind = format
-    bg_img = Image.open(background)
+    try:
+        bg_img = Image.open(background)
+    except UnidentifiedImageError:
+        bg_img = _svg_to_png(background, width=max_bg_width, height=max_bg_height)
     input_mode = bg_img.mode
     bg_images = [bg_img]
     is_animated = False
@@ -192,26 +192,23 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     for img in (img.resize((bg_width, bg_height), LANCZOS) for img in bg_images):
         bg_img = bg_tpl.copy()
         tmp_bg_images.append(bg_img)
-        pos = (int(math.ceil((max_bg_width - img.size[0]) / 2)),
-               int(math.ceil((max_bg_height - img.size[1]) / 2)))
+        pos = (int(math.ceil((max_bg_width - img.size[0]) / 2)), int(math.ceil((max_bg_height - img.size[1]) / 2)))
         bg_img.paste(img, pos)
     bg_images = tmp_bg_images
     res_images = [qr_img]
-    res_images.extend([qr_img.copy() for i in range(len(bg_images) - 1)])
+    res_images.extend([qr_img.copy()] * (len(bg_images) - 1))
     # Cache drawing functions of the result image(s)
     draw_functions = [ImageDraw.Draw(img).point for img in res_images]
-    keep_modules = [consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT,
-                    consts.TYPE_SEPARATOR, consts.TYPE_ALIGNMENT_PATTERN_DARK,
-                    consts.TYPE_ALIGNMENT_PATTERN_LIGHT, consts.TYPE_TIMING_DARK,
-                    consts.TYPE_TIMING_LIGHT]
+    keep_modules = (consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT, consts.TYPE_SEPARATOR,
+                    consts.TYPE_ALIGNMENT_PATTERN_DARK, consts.TYPE_ALIGNMENT_PATTERN_LIGHT, consts.TYPE_TIMING_DARK,
+                    consts.TYPE_TIMING_LIGHT)
     border_offset = border * scale
     d = scale // 3
     for i, row in enumerate(qrcode.matrix_iter(scale=scale, border=0, verbose=True)):
-        i_is_one = (i // d) % 3 == 1
         for j, m in enumerate(row):
             if m in keep_modules:
                 continue
-            if not (i_is_one and (j // d) % 3 == 1):
+            if not (((i // d) % 3 == 1) and ((j // d) % 3 == 1)):
                 for img_idx, img in enumerate(bg_images):
                     fill = img.getpixel((i, j))
                     if fill[3]:
@@ -231,3 +228,36 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
                            loop=loop)
     else:
         res_images[0].save(target, format=kind)
+
+
+def _svg_to_png(source, width, height):
+    """\
+    Converts the SVG source into a PNG and returns a PIL.Image
+
+    :param source: The SVG source.
+    :param width: The target width.
+    :param height: The target height.
+    :return: Image.
+    """
+    out = io.BytesIO()
+    try:
+        source.name
+    except AttributeError:
+        pass
+    with open(source, 'rb') as f:
+        cairosvg.svg2png(file_obj=f, write_to=out)
+    out.seek(0)
+    img = Image.open(out)
+    svg_width, svg_height = img.size
+    ratio = min(width / svg_width, height / svg_height)
+    w, h = int(svg_width * ratio), int(svg_height * ratio)
+    out = io.BytesIO()
+    with open(source, 'rb') as f:
+        cairosvg.svg2png(file_obj=f, write_to=out, output_width=w, output_height=h)
+    out.seek(0)
+    return Image.open(out)
+
+
+if not _SVG_SUPPORT:
+    def _svg_to_png(source, width=None, height=None):  # noqa: F811
+        raise ValueError('cairosvg is required for SVG support')

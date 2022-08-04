@@ -15,11 +15,12 @@ from itertools import chain
 import shutil
 import nox
 
+_PY_VERSIONS = ('2.7', '3.7', '3.8', '3.9', '3.10', 'pypy3')
 _PY_DEFAULT_VERSION = '3.10'
-nox.options.sessions = ['test-2.7', 'test-{}'.format(_PY_DEFAULT_VERSION)]
+nox.options.sessions = ['test-2.7', 'test-{}'.format(_PY_DEFAULT_VERSION), 'test-pypy3']
 
 
-@nox.session(python=['2.7', '3.7', '3.8', '3.9', '3.10'])
+@nox.session(python=_PY_VERSIONS)
 def test(session):
     """\
     Run test suite.
