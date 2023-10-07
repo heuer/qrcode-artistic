@@ -10,7 +10,7 @@ Changes
   Added support for SVG backgrounds iff cairosvg is available;
   suggested by `Markus Ueberall <https://github.com/m-ueberall>`_
 * Avoid to use deprecated Pillow constants
-* Updated default Python version to 3.10 for test suite (Py 2.7 is still supported),
+* Updated default Python version to 3.11 for test suite (Py 2.7 is still supported),
   added support for PyPy3 to the test suite
 
 
