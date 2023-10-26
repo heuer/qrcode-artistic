@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.0.0 -- 2023-10-dd
+3.0.0 -- 2023-10-26
 -------------------
 * Removed support for Python 2.7
 * Fixed `#11 <https://github.com/heuer/qrcode-artistic/issues/11>`_
