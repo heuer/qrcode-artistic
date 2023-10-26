@@ -1,2 +1,2 @@
-include *.txt *.rst
+include *.txt *.rst pyproject.toml
 exclude requirements-testing.txt
