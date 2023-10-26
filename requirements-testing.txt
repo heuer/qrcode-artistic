@@ -1,6 +1,5 @@
 # Requirements to run the tests
 -r requirements.txt
-pytest~=4.6; python_version == '2.7'
-pytest~=6.0; python_version > '2.7'
+pytest
 pyzbar~=0.1.8
-cairosvg~=2.4; python_version > '3.4'
+cairosvg

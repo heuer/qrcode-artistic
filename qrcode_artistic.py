@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 - 2020 -- Lars Heuer
+# Copyright (c) 2016 - 2023 -- Lars Heuer
 # All rights reserved.
 #
 # License: BSD License
@@ -29,7 +29,7 @@ try:
 except ImportError:
     pass
 
-__version__ = '2.1.1.dev'
+__version__ = '3.0.0.dev'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',

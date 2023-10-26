@@ -1,8 +1,9 @@
 Changes
 =======
 
-2.1.1 -- 2022-08-dd
+3.0.0 -- 2023-10-dd
 -------------------
+* Removed support for Python 2.7
 * Fixed `#11 <https://github.com/heuer/qrcode-artistic/issues/11>`_
   Providing floats for scale may result into an infinite loop;
   reported by `Abe Winter <https://github.com/abe-winter>`_
@@ -10,7 +11,7 @@ Changes
   Added support for SVG backgrounds iff cairosvg is available;
   suggested by `Markus Ueberall <https://github.com/m-ueberall>`_
 * Avoid to use deprecated Pillow constants
-* Updated default Python version to 3.11 for test suite (Py 2.7 is still supported),
+* Updated default Python version to 3.11 for test suite,
   added support for PyPy3 to the test suite
 
 
