@@ -130,9 +130,9 @@ def build_release(session):
     git('fetch')
     git('fetch', '--tags')
     git('checkout', version)
-    session.install('setuptools', 'wheel')
+    session.install('build', 'wheel')
     shutil.rmtree('dist', ignore_errors=True)
-    session.run('python', 'setup.py', 'sdist', 'bdist_wheel')
+    session.run('python', '-m', 'build')
     git('checkout', 'master')
 
 
