@@ -181,7 +181,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     loop = 0
     if is_animated:
         loop = bg_img.info.get('loop', 0)
-        bg_images.extend([frame.copy() for frame in ImageSequence.Iterator(bg_img)])
+        bg_images = [frame.copy() for frame in ImageSequence.Iterator(bg_img)]
         durations = [img.info.get('duration', 0) for img in bg_images]
     border = border if border is not None else qrcode.default_border_size
     bg_width, bg_height = bg_images[0].size
@@ -196,7 +196,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
         bg_img.paste(img, pos)
     bg_images = tmp_bg_images
     res_images = [qr_img]
-    res_images.extend([qr_img.copy()] * (len(bg_images) - 1))
+    res_images.extend([qr_img.copy() for _ in range(len(bg_images) - 1)])
     # Cache drawing functions of the result image(s)
     draw_functions = [ImageDraw.Draw(img).point for img in res_images]
     keep_modules = (consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT, consts.TYPE_SEPARATOR,
@@ -224,7 +224,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
     elif mode is not None:
         res_images = [img.convert(mode) for img in res_images]
     if is_animated:
-        res_images[0].save(target, format=kind, uration=durations, save_all=True, append_images=res_images[1:],
+        res_images[0].save(target, format=kind, duration=durations, save_all=True, append_images=res_images[1:],
                            loop=loop)
     else:
         res_images[0].save(target, format=kind)
