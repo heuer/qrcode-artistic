@@ -196,7 +196,7 @@ def write_artistic(qrcode, background, target, mode=None, format=None, kind=None
         bg_img.paste(img, pos)
     bg_images = tmp_bg_images
     res_images = [qr_img]
-    res_images.extend([qr_img.copy() for _ in range(len(bg_images) - 1)])
+    res_images.extend(qr_img.copy() for _ in range(len(bg_images) - 1))
     # Cache drawing functions of the result image(s)
     draw_functions = [ImageDraw.Draw(img).point for img in res_images]
     keep_modules = (consts.TYPE_FINDER_PATTERN_DARK, consts.TYPE_FINDER_PATTERN_LIGHT, consts.TYPE_SEPARATOR,
