@@ -1,6 +1,13 @@
 Changes
 =======
 
+3.0.1 -- 2023-11-dd
+-------------------
+* Fixed `#12 <https://github.com/heuer/qrcode-artistic/pull/12>`_
+  Animated QR Codes couldn't be created. Reported and Fixed
+  by `Ubertao <https://github.com/ubertao>`_
+
+
 3.0.0 -- 2023-10-26
 -------------------
 * Removed support for Python 2.7
