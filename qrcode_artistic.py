@@ -29,7 +29,7 @@ try:
 except ImportError:
     pass
 
-__version__ = '3.0.2'
+__version__ = '3.0.3.dev'
 
 
 def write_pil(qrcode, scale=1, border=None, dark='#000', light='#fff',
