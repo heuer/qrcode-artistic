@@ -20,12 +20,6 @@ try:
     _ZBAR = True
 except ImportError:
     pass
-_PYTHON2 = False
-try:
-    unicode
-    _PYTHON2 = True
-except NameError:
-    pass
 
 
 def decode(img, content):
@@ -186,7 +180,6 @@ def test_issue_12():
     assert org_img.info.get('loop', 0) == res_img.info.get('loop', 0)
 
 
-@pytest.mark.skipif(_PYTHON2, reason='Requires Python >= 3.6')
 def test_svg_to_png():
     content = "Ring my friend I said you'd call"
     qr = segno.make_qr(content)
