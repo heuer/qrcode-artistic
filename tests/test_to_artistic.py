@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 - 2020 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2016 - 2023 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # License: BSD License
@@ -8,7 +8,6 @@
 """\
 Tests against QRCode.to_artistic
 """
-from __future__ import absolute_import
 import os
 import io
 import tempfile
@@ -167,6 +166,24 @@ def test_issue_11():
     finally:
         img.close()
         os.remove(fn)
+
+
+def test_issue_12():
+    # https://github.com/heuer/qrcode-artistic/pull/12
+    content = 'Penny Lane'
+    out = io.BytesIO()
+    img_src = _img_src('animated.gif')
+    org_img = Image.open(img_src)
+    assert org_img.is_animated
+    assert org_img.n_frames > 1
+    qr = segno.make_qr(content)
+    assert qr
+    qr.to_artistic(img_src, out, kind='gif')
+    out.seek(0)
+    res_img = Image.open(out)
+    assert res_img.is_animated
+    assert org_img.n_frames == res_img.n_frames
+    assert org_img.info.get('loop', 0) == res_img.info.get('loop', 0)
 
 
 @pytest.mark.skipif(_PYTHON2, reason='Requires Python >= 3.6')
