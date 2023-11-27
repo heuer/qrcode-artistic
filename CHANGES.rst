@@ -1,11 +1,16 @@
 Changes
 =======
 
-3.0.1 -- 2023-11-dd
+3.0.2 -- 2023-11-27
 -------------------
 * Fixed `#12 <https://github.com/heuer/qrcode-artistic/pull/12>`_
-  Animated QR Codes couldn't be created. Reported and Fixed
+  Animated QR Codes couldn't be created. Reported and fixed
   by `Ubertao <https://github.com/ubertao>`_
+
+
+3.0.1 -- unreleased
+-------------------
+* Unreleased due to packing problems
 
 
 3.0.0 -- 2023-10-26
