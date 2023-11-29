@@ -1,6 +1,6 @@
 [build-system]
-requires = ['setuptools']
-build-backend = 'setuptools.build_meta'
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 
 [project]
@@ -35,14 +35,6 @@ dependencies = [
   "segno>=1.0.2",
   "Pillow",
 ]
-
-
-[tool.setuptools]
-py-modules = ["qrcode_artistic"]
-
-
-[tool.setuptools.dynamic]
-version = {attr = "qrcode_artistic.__version__"}
 
 
 [project.entry-points."segno.plugin.converter"]
